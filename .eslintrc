@@ -23,9 +23,8 @@
   },
   "overrides": [
     {
-      "files": ["frontend/src/**/*.{ts,tsx}"],
-      "env": { "browser": true, "node": false },
-      "plugins": ["react-refresh"],
+      "files": ["apps/mobile/app/**/*.{ts,tsx}", "apps/mobile/components/**/*.{ts,tsx}"],
+      "env": { "browser": false, "node": false },
       "extends": [
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
@@ -33,7 +32,6 @@
       ],
       "settings": { "react": { "version": "18" } },
       "rules": {
-        "react-refresh/only-export-components": ["warn", { "allowConstantExport": true }],
         "no-console": "warn"
       }
     }

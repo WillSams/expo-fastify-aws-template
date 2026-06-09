@@ -1,13 +1,13 @@
 export ENV=development
 export NODE_ENV=${ENV}
-export VITE_ENV=${NODE_ENV}
 
-export SECRET_KEY=change-me
-
-export FRONTEND_PORT=3000
 export API_PORT=8080
 export API_URL=http://localhost:${API_PORT}
-export VITE_API_URL=${API_URL}
-export ALLOWED_ORIGINS=http://localhost:${FRONTEND_PORT}
+export ALLOWED_ORIGINS="*"
+
+export DATABASE_URL=postgresql://appuser:change-me@localhost:5432/app
 
 export ABOUT_MESSAGE="My App API v0.0.1"
+
+# Expo — set your EAS project ID after running `eas init`
+# export EXPO_PROJECT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

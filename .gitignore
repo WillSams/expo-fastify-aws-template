@@ -28,9 +28,17 @@ coverage/
 .DS_Store
 Thumbs.db
 
+# Expo
+apps/mobile/.expo/
+apps/mobile/app-example/
+
+# Google service account — used by EAS Submit, never commit this
+apps/mobile/google-service-account.json
+
 # Terraform
-.infrastructure/.terraform/
-.infrastructure/*.tfstate
-.infrastructure/*.tfstate.backup
+infra/.terraform/
+infra/.terraform.lock.hcl
+infra/*.tfstate
+infra/*.tfstate.backup
 
 # package-lock files — commit all for reproducible CI installs

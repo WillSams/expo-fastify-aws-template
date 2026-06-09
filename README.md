@@ -1,42 +1,45 @@
-# TypeScript Fullstack Template
+# expo-fastify-aws-starter
 
-**TypeScript · React · Material UI · Zustand · Fastify · AWS Lambda · S3 · CloudFront · Terraform**
+**Expo · React Native · NativeWind · Fastify · ECS Fargate · RDS · Terraform**
 
-[![Application Unit Tests](https://github.com/WillSams/fullstack-typescript-template/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/WillSams/fullstack-typescript-template/actions/workflows/pr-validate.yml)
+[![CI](https://github.com/your-org/expo-fastify-aws-starter/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/your-org/expo-fastify-aws-starter/actions/workflows/pr-validate.yml)
 
-A reusable full-stack TypeScript template. Fork it, rename things, and ship.
-
-![text](screenshot.png)
-
-## When to use this stack
-
-**React + Zustand** is a good fit when we want a proven, widely supported UI library without the ceremony of heavier state solutions like Redux. Zustand keeps global state simple: no boilerplate, no provider wrapping our whole tree, and very little setup. That makes it easier to onboard new contributors and keeps the codebase lean as requirements evolve.
-
-**Fastify on Lambda** earns its place when traffic is variable or unpredictable. We pay only for actual invocations, cold starts stay reasonable because of Fastify’s low overhead and an esbuild single-file bundle, and we get automatic scaling without managing servers. It is a good choice for internal tools, MVPs, and APIs that do not justify running a container 24/7.
-
-The combination makes sense when:
-
-- We want **TypeScript end-to-end** with shared types between frontend and backend
-- Traffic is **bursty or low-volume**, where serverless pricing beats reserved capacity
-- Our team wants **minimal ops** with no clusters, auto-scaling groups, or load balancers to manage
-- We need a **quick foundation** for a new project without starting from scratch each time
-
-If we expect sustained high-throughput traffic, such as thousands of requests per second continuously, a long-running container behind a load balancer will likely be cheaper. For everything else, this stack gets us to production quickly without much operational overhead.
+A monorepo template for shipping a React Native mobile app backed by a Fastify API on AWS. Fork it, rename things, and ship.
 
 | Layer | Tech |
 |---|---|
-| Frontend | React 18, Material UI, Zustand, React Router, Vite, Vitest |
-| Backend | Fastify 5, AWS Lambda (`@fastify/aws-lambda`), esbuild |
-| Infrastructure | Terraform — Lambda, API Gateway (HTTP), S3, CloudFront, IAM, CloudWatch |
+| Mobile | Expo SDK 54, React Native, Expo Router (file-based routing), NativeWind v4 |
+| API | Fastify 5, TypeScript, Postgres (via `DATABASE_URL`) |
+| Shared types | `packages/types` — imported by both apps |
+| Infrastructure | Terraform — ECS Fargate, RDS (Postgres), ALB, API Gateway v2, S3, CloudFront |
 | Quality | ESLint, Prettier, Husky pre-commit + pre-push, GitHub Actions CI |
+
+## When to use this stack
+
+This template fits when:
+
+- You want **TypeScript end-to-end** with types shared between mobile and API
+- Your API needs **persistent storage** (Postgres) rather than a purely stateless function
+- You want **predictable infrastructure costs** — one ECS task runs 24/7 vs. Lambda cold starts under load
+- You need a foundation that scales from a single Fargate task to multiple replicas without rearchitecting
+
+If your traffic is very low or bursty and you don't need Postgres, a Lambda-based template will be cheaper. For everything else — mobile apps with real data — this stack gets you to production without surprises.
 
 ## Prerequisites
 
-- [Node.js 22](https://nodejs.org/) — use `nvm use` to pick the version in `.nvmrc`
+- [Node.js 22](https://nodejs.org/) — `nvm use` picks the version in `.nvmrc`
 - [nvm](https://github.com/nvm-sh/nvm) *(recommended)*
 - [direnv](https://direnv.net/) *(recommended)*
-- [Terraform CLI](https://developer.hashicorp.com/terraform/install) — for infra changes
-- [AWS CLI](https://aws.amazon.com/cli/) — for deployments
+- [Expo Go](https://expo.dev/go) on your phone — for quick previews without a native build
+- [Docker](https://www.docker.com/) — for building the API image
+- [Terraform CLI](https://developer.hashicorp.com/terraform/install)
+- [AWS CLI](https://aws.amazon.com/cli/)
+
+For mobile development you also need one of:
+
+- **iOS**: Xcode (Mac only)
+- **Android**: Android Studio + an emulator, or a physical device
+- **Expo Go**: the fastest way to preview on a real device without a native build
 
 ## Getting Started
 
@@ -45,46 +48,69 @@ If we expect sustained high-throughput traffic, such as thousands of requests pe
 nvm use
 
 # 2. Set up environment variables
-cp .envrc.example .envrc   # fill in values, then:
+cp .envrc.example .envrc   # fill in values
 direnv allow
 
-# 3. Install all dependencies
-npm install
-cd frontend && npm install && cd ..
-cd backend  && npm install && cd ..
+# 3. Install dependencies
+npm install                           # root (husky, prettier, concurrently)
+cd apps/api      && npm install && cd ../..
+cd apps/mobile   && npm install && cd ../..
+cd packages/types && npm install && cd ../..
 
-# 4. Start both services
-npm run dev
+# 4. Start everything together
+npm run start
+# or separately:
+npm run dev:api      # Fastify API on :8080
+npm run dev:mobile   # Expo (new terminal)
 ```
 
-The frontend is served at `http://localhost:3000` and the backend at `http://localhost:8080`.
+Open **Expo Go** on your phone, tap the QR scanner inside the app, and scan. The `--tunnel` flag routes through Expo's servers so it works regardless of your local network or firewall — no need to be on the same subnet as your dev machine. Or press `a` for Android emulator / `i` for iOS simulator.
+
+The API runs at `http://localhost:8080`.
 
 ## Project Structure
 
-```
-fullstack-typescript-template/
-├── frontend/          # React + Zustand SPA (deploys to S3 + CloudFront)
-│   ├── src/
-│   │   ├── api/       # Axios client
-│   │   ├── pages/     # Route-level components
-│   │   ├── stores/    # Zustand stores
-│   │   └── specs/     # Vitest tests + setup
-│   └── vite.config.ts
-├── backend/           # Fastify API (deploys as Lambda)
-│   ├── src/
-│   │   ├── app.ts     # Fastify instance + routes
-│   │   ├── index.ts   # Lambda handler entry point
-│   │   └── server.ts  # Local dev server
-│   └── specs/         # Jest tests
-├── .infrastructure/   # Terraform
-│   ├── api_gateway.tf # HTTP API → Lambda
-│   ├── frontend.tf    # S3 bucket + CloudFront
-│   ├── lambda.tf      # Lambda function (ECR image)
-│   ├── iam.tf
-│   ├── logs.tf
-│   └── environments/  # demo / staging / prod tfvars
+```text
+expo-fastify-aws-starter/
+├── apps/
+│   ├── api/               # Fastify API (deploys to ECS Fargate)
+│   │   ├── src/
+│   │   │   ├── app.ts     # Fastify instance, CORS, routes
+│   │   │   ├── server.ts  # Entry point — starts the HTTP server
+│   │   │   └── index.ts   # Re-exports app (used by tests)
+│   │   ├── specs/         # Jest integration tests
+│   │   └── Dockerfile
+│   └── mobile/            # Expo React Native app (SDK 54)
+│       ├── app/           # Expo Router file-based routes
+│       │   ├── (tabs)/    # Tab navigator
+│       │   │   ├── _layout.tsx
+│       │   │   ├── index.tsx
+│       │   │   └── explore.tsx
+│       │   ├── _layout.tsx  # Root layout, imports global.css
+│       │   └── modal.tsx
+│       ├── components/    # Shared UI components
+│       ├── hooks/         # useColorScheme, useThemeColor
+│       ├── constants/     # Theme colours
+│       ├── global.css     # Tailwind/NativeWind entry point
+│       ├── tailwind.config.js
+│       ├── metro.config.js
+│       ├── babel.config.js
+│       └── app.json
+├── packages/
+│   └── types/             # Shared TypeScript types
+│       └── src/index.ts   # ApiResponse<T> and other shared interfaces
+├── infra/                 # Terraform
+│   ├── vpc.tf             # VPC, subnets, security groups
+│   ├── ecr.tf             # ECR repository for API image
+│   ├── ecs.tf             # ECS cluster, task definition, service
+│   ├── alb.tf             # Application Load Balancer
+│   ├── rds.tf             # RDS Postgres (db.t3.micro)
+│   ├── api_gateway.tf     # HTTP API → VPC Link → ALB
+│   ├── frontend.tf        # S3 + CloudFront (web companion / landing page)
+│   └── environments/      # demo / staging / prod tfvars
 └── .github/
-    └── workflows/     # CI: lint + test on every PR
+    └── workflows/
+        └── pr-validate.yml  # CI: lint + test + terraform validate
 ```
 
 ## Scripts
@@ -93,82 +119,116 @@ From the project root:
 
 | Command | Description |
 |---|---|
-| `npm run dev` | Start frontend + backend concurrently |
-| `npm run dev:frontend` | Start frontend only |
-| `npm run dev:backend` | Start backend only |
-| `npm run test:frontend` | Run frontend tests |
-| `npm run test:backend` | Run backend tests |
-| `npm run test:frontend:coverage` | Frontend tests with coverage |
-| `npm run test:backend:coverage` | Backend tests with coverage |
-| `npm run lint:frontend` | Lint frontend |
-| `npm run lint:backend` | Lint backend |
-| `npm run format:frontend` | Format frontend |
-| `npm run format:backend` | Format backend |
+| `npm run dev:api` | Start the Fastify API in watch mode |
+| `npm run test:api` | Run API tests |
+| `npm run test:api:coverage` | API tests with coverage report |
+| `npm run lint:api` | Lint the API |
+| `npm run format:api` | Format the API |
+| `npm run test:mobile` | Run mobile tests |
+| `npm run test:mobile:coverage` | Mobile tests with coverage report |
+| `npm run lint:mobile` | Lint the mobile app |
+| `npm run format:mobile` | Format the mobile app |
 | `npm run clean` | Remove all build artefacts and node_modules |
 
-## Testing
+## Shared Types
 
-```bash
-# Backend (Jest)
-npm run test:backend
+Both apps import from `packages/types`:
 
-# Frontend (Vitest)
-npm run test:frontend
+```ts
+// apps/api/src/app.ts
+import type { ApiResponse } from '@template/types';
+
+// apps/mobile/app/index.tsx
+import type { ApiResponse } from '@template/types';
 ```
+
+Add your domain types to `packages/types/src/index.ts` and they'll be available everywhere.
 
 ## Infrastructure
 
-The Terraform configuration in `.infrastructure/` provisions:
+The Terraform configuration in `infra/` provisions:
 
-- **Lambda** function (Docker image from ECR)
-- **API Gateway HTTP API** with CORS and `$default` catch-all route
-- **S3 bucket** for the React SPA (private, versioned)
-- **CloudFront** distribution with OAC, HTTPS redirect, and SPA 404 fallback
-- **IAM** role + `AWSLambdaBasicExecutionRole` policy
-- **CloudWatch** log group with configurable retention
+- **VPC** with two public subnets across AZs, an internet gateway, and security groups
+- **ECR** repository for the API Docker image (keeps last 10 images)
+- **ECS Fargate** cluster, task definition, and service (0.25 vCPU / 512 MB by default)
+- **ALB** routing HTTP traffic to ECS tasks
+- **RDS Postgres** `db.t3.micro` in the same VPC, accessible only from ECS
+- **API Gateway HTTP API** (v2) via VPC Link → ALB
+- **S3 + CloudFront** for a web companion or landing page
+- **CloudWatch** log groups for ECS and API Gateway
+
+### Estimated cost (us-east-1, single demo environment)
+
+| Resource | ~$/month |
+|---|---|
+| ECS Fargate (0.25 vCPU / 512 MB, 24/7) | ~$10 |
+| ALB | ~$18 |
+| RDS db.t3.micro | ~$15 |
+| API Gateway (low volume) | <$1 |
+| CloudFront + S3 | <$1 |
+| **Total** | **~$45** |
+
+Scale `api_desired_count`, `api_cpu`, and `api_memory` in the tfvars to fit your load.
+
+### Deploy infrastructure
 
 ```bash
-cd .infrastructure
+cd infra
 
-# Initialise (once)
+# First time only
 terraform init
 
-# Plan against an environment
+# Preview changes
 terraform plan -var-file=environments/demo.tfvars
 
 # Apply
 terraform apply -var-file=environments/demo.tfvars
 ```
 
-### Deploying the frontend
+### Deploy the API
 
-After `terraform apply`, sync the Vite build to the S3 bucket:
+Build and push the Docker image to ECR, then ECS will pick up the new image on the next deployment:
 
 ```bash
-cd frontend && npm run build
-aws s3 sync dist/ s3://$(terraform -chdir=../.infrastructure output -raw s3_bucket) --delete
+# Get the ECR URL from Terraform output
+ECR_URL=$(terraform -chdir=infra output -raw ecr_repository_url)
+AWS_ACCOUNT=$(aws sts get-caller-identity --query Account --output text)
+AWS_REGION=us-east-1
+
+# Authenticate Docker to ECR
+aws ecr get-login-password --region $AWS_REGION \
+  | docker login --username AWS --password-stdin $ECR_URL
+
+# Build, tag, push
+docker build -t api apps/api
+docker tag api:latest $ECR_URL:latest
+docker push $ECR_URL:latest
+
+# Force ECS to pull the new image
+aws ecs update-service \
+  --cluster demo-template \
+  --service demo-template-api \
+  --force-new-deployment \
+  --region $AWS_REGION
 ```
 
-### Deploying the backend
+### Deploy the web frontend (optional)
 
-Build and push the Docker image to ECR, then update the Lambda:
+If you're using the S3/CloudFront stack for a landing page:
 
 ```bash
-cd backend && npm run build
-
-# Tag and push to ECR (replace with your account/region/function name)
-aws ecr get-login-password | docker login --username AWS --password-stdin <account>.dkr.ecr.<region>.amazonaws.com
-docker build -t fastify-template-function .
-docker tag fastify-template-function:latest <account>.dkr.ecr.<region>.amazonaws.com/fastify-template-function:latest
-docker push <account>.dkr.ecr.<region>.amazonaws.com/fastify-template-function:latest
-
-aws lambda update-function-code \
-  --function-name <environment>-fastify-template-function \
-  --image-uri <account>.dkr.ecr.<region>.amazonaws.com/fastify-template-function:latest
+S3_BUCKET=$(terraform -chdir=infra output -raw s3_bucket)
+# build your web app, then:
+aws s3 sync dist/ s3://$S3_BUCKET --delete
 ```
 
 ## Code Quality
 
-Pre-commit hooks (Husky) run format + lint on every commit. Pre-push hooks run the full test suite.
+- **Pre-commit** (Husky): formats and lints both apps + runs `terraform fmt`
+- **Pre-push** (Husky): runs the full test suite for both apps
+- **CI** (GitHub Actions): lint, test, and `terraform validate` run on every PR to `main`
+- Branch names must follow semantic conventions: `feat/`, `fix/`, `chore/`, `refactor/`, `docs/`, `style/`, `test/`
 
-GitHub Actions runs lint and tests on every PR to `main`. Branch names must follow semantic conventions (`feat/`, `fix/`, `chore/`, `refactor/`, `docs/`, `style/`, `test/`).
+## Publishing the mobile app
+
+See [PUBLISH.md](PUBLISH.md) for step-by-step instructions on publishing to the Google Play Store.
