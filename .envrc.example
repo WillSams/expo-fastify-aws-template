@@ -9,5 +9,8 @@ export DATABASE_URL=postgresql://appuser:change-me@localhost:5432/app
 
 export ABOUT_MESSAGE="My App API v0.0.1"
 
+# Expo Metro bundler port
+export EXPO_PORT=3000
+
 # Expo — set your EAS project ID after running `eas init`
 # export EXPO_PROJECT_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
