@@ -1,114 +1,70 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 
-import { Collapsible } from '@/components/ui/collapsible';
-import { ExternalLink } from '@/components/external-link';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Fonts } from '@/constants/theme';
+const STACK = [
+  {
+    layer: 'Mobile',
+    tech: 'Expo SDK 54 · Expo Router · NativeWind v4',
+    detail: 'File-based routing, Tailwind className styling, React Native 0.81',
+    color: 'border-blue-200 bg-blue-50',
+    label: 'text-blue-600',
+  },
+  {
+    layer: 'API',
+    tech: 'Fastify 5 · TypeScript · Postgres',
+    detail: 'Runs on ECS Fargate in production, local dev on port 8080',
+    color: 'border-violet-200 bg-violet-50',
+    label: 'text-violet-600',
+  },
+  {
+    layer: 'Shared Types',
+    tech: 'packages/types',
+    detail: 'TypeScript interfaces shared between mobile and API — no duplicated types',
+    color: 'border-indigo-200 bg-indigo-50',
+    label: 'text-indigo-600',
+  },
+  {
+    layer: 'Infrastructure',
+    tech: 'AWS · Terraform · ECS Fargate · RDS',
+    detail: 'VPC, ALB, ECR, API Gateway v2, CloudFront, RDS Postgres — ~$45/mo demo env',
+    color: 'border-orange-200 bg-orange-50',
+    label: 'text-orange-600',
+  },
+  {
+    layer: 'CI / CD',
+    tech: 'GitHub Actions · Husky',
+    detail: 'Path-filtered jobs for api, mobile, and terraform validate on every PR',
+    color: 'border-gray-200 bg-gray-50',
+    label: 'text-gray-600',
+  },
+] as const;
 
-export default function TabTwoScreen() {
+export default function ExploreScreen() {
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }
-    >
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText
-          type="title"
-          style={{
-            fontFamily: Fonts.rounded,
-          }}
-        >
-          Explore
-        </ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image
-          source={require('@/assets/images/react-logo.png')}
-          style={{ width: 100, height: 100, alignSelf: 'center' }}
-        />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful{' '}
-          <ThemedText type="defaultSemiBold" style={{ fontFamily: Fonts.mono }}>
-            react-native-reanimated
-          </ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
+    <ScrollView className="flex-1 bg-white">
+      <View className="px-6 pt-16 pb-10">
+        <Text className="text-3xl font-bold text-gray-900 mb-1">The Stack</Text>
+        <Text className="text-gray-500 mb-8">What&#39;s under the hood of this template.</Text>
+
+        {STACK.map((item) => (
+          <View key={item.layer} className={`mb-4 border rounded-2xl p-5 ${item.color}`}>
+            <Text className={`text-xs font-bold uppercase tracking-widest mb-1 ${item.label}`}>
+              {item.layer}
+            </Text>
+            <Text className="text-base font-semibold text-gray-900 mb-1">{item.tech}</Text>
+            <Text className="text-sm text-gray-500 leading-5">{item.detail}</Text>
+          </View>
+        ))}
+
+        <View className="mt-2 border border-gray-200 rounded-2xl p-5">
+          <Text className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+            Getting started
+          </Text>
+          <Text className="text-sm text-gray-600 leading-6">
+            Run <Text className="font-mono bg-gray-100 px-1 rounded">npm run reset-project</Text> to
+            clear these example screens and start with a blank canvas.
+          </Text>
+        </View>
+      </View>
+    </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-});

@@ -14,6 +14,9 @@ A monorepo template for shipping a React Native mobile app backed by a Fastify A
 | Infrastructure | Terraform — ECS Fargate, RDS (Postgres), ALB, API Gateway v2, S3, CloudFront |
 | Quality | ESLint, Prettier, Husky pre-commit + pre-push, GitHub Actions CI |
 
+![text](screenshot-1.png)
+![text](screenshot-2.png)
+
 ## When to use this stack
 
 This template fits when:
