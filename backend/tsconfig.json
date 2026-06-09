@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "ES2022",
+    "target": "ES2022",
+    "moduleResolution": "bundler",
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "isolatedModules": true,
+    "types": ["jest", "node"],
+    "paths": {
+      "#src/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "specs", "jest.config.ts"]
+}

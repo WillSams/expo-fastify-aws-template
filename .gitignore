@@ -1,0 +1,36 @@
+# Dependencies
+**/node_modules
+
+# Build artifacts
+dist/
+build/
+out/
+
+# Environment — copy .envrc.example and fill in values
+.envrc
+.env
+*.local
+
+# Logs
+logs/
+*.log
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# IDE
+.idea/
+.vscode/
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Terraform
+.infrastructure/.terraform/
+.infrastructure/*.tfstate
+.infrastructure/*.tfstate.backup
+
+# package-lock files — commit all for reproducible CI installs

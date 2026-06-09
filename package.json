@@ -1,0 +1,33 @@
+{
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "format:frontend": "prettier --write \"frontend/src/**/*.{ts,tsx,css}\"",
+    "format:backend": "prettier --write \"backend/src/**/*.ts\"",
+    "lint:frontend": "eslint frontend/src --ext ts,tsx",
+    "lint:backend": "eslint backend/src --ext ts",
+    "test:backend": "cd backend && npm test",
+    "test:backend:coverage": "cd backend && npm run test:coverage",
+    "test:frontend": "cd frontend && npm test",
+    "test:frontend:coverage": "cd frontend && npm run test:coverage",
+    "prepare": "husky install",
+    "clean": "node clean.js"
+  },
+  "dependencies": {
+    "concurrently": "^10.0.3",
+    "husky": "^9.1.7",
+    "prettier": "^3.3.2",
+    "rimraf": "^6.0.1"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.13.0",
+    "@typescript-eslint/parser": "^7.13.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-react": "^7.34.3",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.4.7"
+  }
+}
