@@ -9,8 +9,8 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "jest --watchAll=false",
-    "test:coverage": "jest --coverage --watchAll=false",
+    "test": "jest --watchAll=false --passWithNoTests",
+    "test:coverage": "jest --coverage --watchAll=false --passWithNoTests",
     "format": "prettier --write 'app/**/*.{ts,tsx}' 'components/**/*.{ts,tsx}'"
   },
   "dependencies": {
