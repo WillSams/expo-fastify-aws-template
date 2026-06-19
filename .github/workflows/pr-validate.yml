@@ -1,4 +1,4 @@
-name: CI
+name: Application Unit Tests
 
 on:
   push:
@@ -10,58 +10,60 @@ permissions:
   contents: read
 
 jobs:
-  test-api:
-    name: API Tests
+  unit-test-api:
+    name: API Unit Tests
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'push' ||
-      contains(github.event.pull_request.changed_files, 'apps/api/') ||
-      contains(github.event.pull_request.changed_files, 'packages/')
     env:
       ABOUT_MESSAGE: "Template API v0.0.1 (ci)"
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: apps/api/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            apps/api/package-lock.json
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install api dependencies
         working-directory: apps/api
         run: npm ci
 
       - name: Lint
-        working-directory: apps/api
         run: npm run lint
 
       - name: Test with coverage
         working-directory: apps/api
         run: npm run test:coverage
 
-  test-mobile:
-    name: Mobile Tests
+  unit-test-mobil:
+    name: Mobile Unit Tests
     runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'push' ||
-      contains(github.event.pull_request.changed_files, 'apps/mobile/') ||
-      contains(github.event.pull_request.changed_files, 'packages/')
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: apps/mobile/package-lock.json
+          cache-dependency-path: |
+            package-lock.json
+            apps/mobile/package-lock.json
 
-      - name: Install dependencies
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
         working-directory: apps/mobile
         run: npm ci
 
       - name: Lint
-        working-directory: apps/mobile
         run: npm run lint
 
       - name: Test with coverage
