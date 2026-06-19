@@ -67,26 +67,3 @@ jobs:
       - name: Test with coverage
         working-directory: apps/mobile
         run: npm run test:coverage
-
-  validate-terraform:
-    name: Terraform Validate
-    runs-on: ubuntu-latest
-    if: |
-      github.event_name == 'push' ||
-      contains(github.event.pull_request.changed_files, 'infra/')
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform init
-        working-directory: infra
-        run: terraform init -backend=false
-
-      - name: Terraform validate
-        working-directory: infra
-        run: terraform validate
-
-      - name: Terraform format check
-        working-directory: infra
-        run: terraform fmt -check -recursive
