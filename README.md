@@ -4,7 +4,7 @@
 
 TODO: wire-up deployment actions
 
-[![CI](https://github.com/your-org/expo-fastify-aws-starter/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/your-org/expo-fastify-aws-starter/actions/workflows/pr-validate.yml)
+[![CI](https://github.com/WillSams/expo-fastify-aws-starter/actions/workflows/pr-validate.yml/badge.svg)](https://github.com/WillSams/expo-fastify-aws-starter/actions/workflows/pr-validate.yml)
 
 A monorepo template for shipping a React Native mobile app backed by a Fastify API on AWS. Fork it, rename things, and ship.
 
