@@ -18,7 +18,7 @@ export default function HomeScreen() {
       const data = await res.json();
       setMessage(data.result || data.status);
       setStatus('success');
-    } catch (e) {
+    } catch {
       setMessage('Could not reach the API. Is it running on ' + API_URL + '?');
       setStatus('error');
     }
