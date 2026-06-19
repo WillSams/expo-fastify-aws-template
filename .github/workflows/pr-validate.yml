@@ -35,13 +35,14 @@ jobs:
         run: npm ci
 
       - name: Lint
+        working-directory: apps/api
         run: npm run lint
 
       - name: Test with coverage
         working-directory: apps/api
         run: npm run test:coverage
 
-  unit-test-mobil:
+  unit-test-mobile:
     name: Mobile Unit Tests
     runs-on: ubuntu-latest
     steps:
@@ -64,6 +65,7 @@ jobs:
         run: npm ci
 
       - name: Lint
+        working-directory: apps/mobile
         run: npm run lint
 
       - name: Test with coverage
