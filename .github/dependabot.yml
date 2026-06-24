@@ -10,21 +10,36 @@ updates:
   #   target-branch: main
 
   - package-ecosystem: npm
-    directory: "/frontend"
+    directory: "/apps/mobile"
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
     target-branch: main
+    # Expo SDK packages must be bumped together via `expo install` — never let
+    # Dependabot raise a major bump on them in isolation (it breaks the build).
+    ignore:
+      - dependency-name: "expo"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "expo-*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-native"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-native-*"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: npm
-    directory: "/backend"
+    directory: "/apps/api"
     schedule:
       interval: weekly
     open-pull-requests-limit: 10
     target-branch: main
 
   - package-ecosystem: terraform
-    directory: "/.infrastructure"
+    directory: "/infra"
     schedule:
       interval: weekly
     open-pull-requests-limit: 5

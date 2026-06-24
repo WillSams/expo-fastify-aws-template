@@ -10,11 +10,11 @@ A monorepo template for shipping a React Native mobile app backed by a Fastify A
 
 | Layer | Tech |
 |---|---|
-| Mobile | Expo SDK 54, React Native, Expo Router (file-based routing), NativeWind v4 |
+| Mobile | Expo SDK 56, React Native, Expo Router (file-based routing), NativeWind v4 |
 | API | Fastify 5, TypeScript, Postgres (via `DATABASE_URL`) |
 | Shared types | `packages/types` — imported by both apps |
 | Infrastructure | Terraform — ECS Fargate, RDS (Postgres), ALB, API Gateway v2, S3, CloudFront |
-| Quality | ESLint, Prettier, Husky pre-commit + pre-push, GitHub Actions CI |
+| Quality | ESLint, Prettier, Husky pre-commit + pre-push, Jest + Testing Library, GitHub Actions CI |
 
 ![text](screenshot-1.png)
 ![text](screenshot-2.png)
