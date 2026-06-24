@@ -18,18 +18,21 @@ updates:
     # Expo SDK packages must be bumped together via `expo install` — never let
     # Dependabot raise a major bump on them in isolation (it breaks the build).
     ignore:
+      # Expo SDK and community native modules: allow patch/minor, block majors
+      # (a major must go through `expo install` / an SDK upgrade).
       - dependency-name: "expo"
         update-types: ["version-update:semver-major"]
       - dependency-name: "expo-*"
         update-types: ["version-update:semver-major"]
-      - dependency-name: "react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-dom"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-native"
-        update-types: ["version-update:semver-major"]
       - dependency-name: "react-native-*"
         update-types: ["version-update:semver-major"]
+      # Pinned by the Expo SDK and must match react-native-renderer exactly —
+      # ANY bump (even a patch) breaks parity and crashes the app on launch.
+      # Bump these only via `expo install` during an SDK upgrade.
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "react-test-renderer"
+      - dependency-name: "react-native"
 
   - package-ecosystem: npm
     directory: "/apps/api"
