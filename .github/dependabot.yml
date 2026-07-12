@@ -33,6 +33,12 @@ updates:
       - dependency-name: "react-dom"
       - dependency-name: "react-test-renderer"
       - dependency-name: "react-native"
+      # Also SDK-pinned to an exact version (scoped name, so the react-native-*
+      # glob above does not match it).
+      - dependency-name: "@react-native-async-storage/async-storage"
+      # NativeWind v4 requires Tailwind v3 — a Tailwind v4 major breaks styling.
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: npm
     directory: "/apps/api"
@@ -43,6 +49,14 @@ updates:
 
   - package-ecosystem: terraform
     directory: "/infra"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    target-branch: main
+
+  # Keep the GitHub Actions used in workflows current.
+  - package-ecosystem: github-actions
+    directory: "/"
     schedule:
       interval: weekly
     open-pull-requests-limit: 5

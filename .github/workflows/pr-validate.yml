@@ -16,10 +16,10 @@ jobs:
     env:
       ABOUT_MESSAGE: "Template API v0.0.1 (ci)"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -46,10 +46,10 @@ jobs:
     name: Mobile Unit Tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Set up Node.js 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: '22'
           cache: 'npm'
@@ -63,6 +63,13 @@ jobs:
       - name: Install mobile dependencies
         working-directory: apps/mobile
         run: npm ci
+
+      # Fails the build if any dependency has drifted from the versions the
+      # Expo SDK expects — catches SDK-parity breakage (e.g. a react or
+      # tailwindcss bump) that unit tests would not surface until a native build.
+      - name: Check Expo SDK dependency parity
+        working-directory: apps/mobile
+        run: npx expo install --check
 
       - name: Lint
         working-directory: apps/mobile
